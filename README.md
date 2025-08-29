@@ -1,0 +1,1 @@
+# Analise-De-Vulnerabilidades-Endpoint-Windows
