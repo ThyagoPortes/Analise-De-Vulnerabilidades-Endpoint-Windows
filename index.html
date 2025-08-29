@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudo de Caso: Análise de Vulnerabilidades em Endpoint Windows 11</title>
+    <style>
+        /* --- Reset e Configurações Globais --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #444;
+            background-color: #f4f7fc;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* --- Header Sóbrio e Focado em Segurança --- */
+        .header {
+            background-color: #1a253c;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%232a3a5e' fill-opacity='0.4'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0h1v5h5v1H6v5H5V6H0V5h5z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: #ffffff;
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #4a6a9b;
+            color: #e0e6ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 5px;
+        }
+
+        /* --- Estilos do Conteúdo --- */
+        .content {
+            padding: 30px;
+        }
+        
+        .author {
+            text-align: center;
+            padding: 15px;
+            background-color: #eef2f9;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            color: #1a253c;
+            border: 1px solid #d8e0f0;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 1.8em;
+            color: #1a253c;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eef2f9;
+        }
+        
+        .section h3 {
+            font-size: 1.3em;
+            color: #2a3a5e;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .executive-summary {
+            background-color: #2a3a5e;
+            color: #f4f7fc;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        
+        .executive-summary h2 {
+            color: #ffffff;
+            border-bottom-color: #4a6a9b;
+        }
+        
+        .evidence-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .screenshot {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            border: 1px solid #d8e0f0;
+        }
+        
+        .screenshot-caption {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: -5px;
+            font-style: italic;
+        }
+
+        .footer {
+            background: #1a253c;
+            color: #e0e6ff;
+            text-align: center;
+            padding: 30px;
+            font-size: 0.9em;
+        }
+        .footer a {
+            color: #8db4ff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Estudo de Caso: Análise de Vulnerabilidades em Endpoint</h1>
+            <p class="subtitle">Uma auditoria de segurança híbrida (Black Box & White Box) em um sistema Windows 11</p>
+            <div>
+                <span class="tech-badge">Kali Linux</span>
+                <span class="tech-badge">Windows 11</span>
+                <span class="tech-badge">Nmap</span>
+                <span class="tech-badge">Nessus</span>
+                <span class="tech-badge">Java JRE</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="author">
+                Relatório elaborado por <strong>Thyago Portes</strong>
+            </div>
+
+            <div class="section executive-summary">
+                <h2>📋 Sumário Executivo</h2>
+                <p>Este relatório detalha os resultados de uma análise de segurança híbrida realizada em um endpoint simulado com sistema operacional Windows 11. A análise externa inicial não revelou vetores de ataque significativos, indicando uma postura de segurança de rede robusta. No entanto, a análise autenticada identificou múltiplas vulnerabilidades de severidade CRÍTICA, associadas a uma versão desatualizada do Java Runtime Environment (JRE). Os achados demonstram que a segurança de um host não pode ser medida apenas pela sua superfície de ataque de rede e ressaltam a importância crítica da gestão contínua de patches em softwares de terceiros.</p>
+            </div>
+
+            <div class="section">
+                <h2>Fase 1: Reconhecimento de Rede (Black Box)</h2>
+                <h3>Resultados</h3>
+                <p>A análise de rede externa com Nmap demonstrou que o host Windows 11 possui uma postura de segurança robusta. O firewall ativo bloqueou e filtrou todas as tentativas de varredura, não revelando nenhum serviço. Do ponto de vista de um atacante externo, o sistema apresentou-se como uma 'caixa-preta' (black box) e seguro.</p>
+                <div class="evidence-container">
+                    <img src="https://raw.githubusercontent.com/SEU-USUARIO/NOME-DO-REPOSITORIO/main/images/04_resultado_nmap.png" alt="Resultado do scan Nmap mostrando portas filtradas" class="screenshot">
+                    <p class="screenshot-caption">Evidência: Resultado do Nmap indicando 1000 portas filtradas pelo firewall.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Fase 2: Análise de Vulnerabilidades (White Box)</h2>
+                <h3>Resultados</h3>
+                <p>Após um extenso processo de troubleshooting para permitir a comunicação através do firewall e das políticas de segurança do host, a varredura autenticada com Nessus foi bem-sucedida (Auth: Pass). A análise revelou um total de 47 vulnerabilidades, das quais <strong>17 foram classificadas como CRÍTICAS</strong> e 15 como ALTAS. A esmagadora maioria das falhas críticas estava diretamente associada à presença de uma versão obsoleta do Oracle Java JRE.</p>
+                
+                <div class="evidence-container">
+                     <img src="https://raw.githubusercontent.com/SEU-USUARIO/NOME-DO-REPOSITORIO/main/images/06_dashboard_resultados_nessus.png" alt="Dashboard do Nessus com o resultado do scan" class="screenshot">
+                    <p class="screenshot-caption">Evidência: Dashboard do Nessus com o resumo das vulnerabilidades encontradas.</p>
+                </div>
+                
+                <div class="evidence-container">
+                     <img src="https://raw.githubusercontent.com/SEU-USUARIO/NOME-DO-REPOSITORIO/main/images/07_detalhe_vulnerabilidade_encontrada.png" alt="Detalhe das vulnerabilidades críticas do Java" class="screenshot">
+                    <p class="screenshot-caption">Evidência: Detalhe das vulnerabilidades críticas relacionadas ao Java JRE.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Conclusão e Recomendações</h2>
+                <h3>Conclusão</h3>
+                <p>O estudo de caso demonstrou com sucesso que um endpoint pode parecer seguro externamente, mas conter riscos críticos internamente. A falha na gestão de patches de softwares de terceiros (Java) foi identificada como o principal vetor de risco, superando as robustas defesas de rede do sistema operacional. O projeto também destacou a complexidade e a importância do troubleshooting de configurações de segurança (Firewall, UAC, Serviços) para permitir a realização de auditorias de segurança eficazes em ambientes Windows modernos.</p>
+                <h3>Recomendação</h3>
+                <p>Recomenda-se fortemente a implementação de um ciclo de vida de gestão de vulnerabilidades que inclua varreduras autenticadas regulares. Tais varreduras são essenciais para garantir a identificação e remediação de softwares desatualizados no ambiente, mitigando riscos que são invisíveis para análises de segurança externas.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Projeto de Estudo de Caso de Análise de Vulnerabilidades.</p>
+            <p>Desenvolvido por Thyago Portes | <a href="https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO" target="_blank">Veja o Repositório no GitHub</a></p>
+        </div>
+    </div>
+</body>
+</html>
